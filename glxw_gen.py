@@ -3,11 +3,9 @@
 import argparse
 import os
 import re
-import sys
-if sys.version_info < (3, 0):
-    from urllib import urlretrieve
-else:
-    from urllib.request import urlretrieve
+import sys    
+import requests
+
 
 
 def download(output_dir, include_dir, source_url, filename):
@@ -26,7 +24,10 @@ def download(output_dir, include_dir, source_url, filename):
     dirname = os.path.dirname(full_filename)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-    urlretrieve(source, full_filename)
+            
+    r = requests.get(source_url)
+    with open(full_filename, 'wb') as outfile:
+        outfile.write(r.content)    
 
 def parse_funcs(filename, regex_string, blacklist):
     print('Parsing header %s' % os.path.basename(filename))
@@ -344,6 +345,5 @@ official sources and generates an extension loading library.
 
                 generate_header(api, funcs, api_includes, prefix, suffix, include_file)
                 generate_library(api, funcs, api_includes, prefix, suffix, source_file, args.use_egl)
-
 
 
